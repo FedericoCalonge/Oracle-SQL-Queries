@@ -16,15 +16,15 @@
                     --trim_character "A", entonces nos devuelve "lejo").
                 --1.B-Si ponemos TRAILING nos borra el caracter al FIN del String.                
                 --1.C-Si ponemos BOTH nos borra ambos caracteres (inicio y fin).
-	select 	'       Hola Pepe    '                 AS HolaPepe,         --       Hola Pepe    
-			TRIM('       Hola Pepe    ')           AS HolaPepeTrim,     --Hola Pepe
-			TRIM(LEADING 'a' from 'antonia')       AS Example_Trim_1,   --ntonia
-			TRIM(TRAILING 'a' from 'antonia')      AS Example_Trim_2,   --antoni
-			TRIM(BOTH 'A' FROM 'ANTONIA')          AS Example_Trim3,    --NTONI
+	select 	'       Hola Pepe    '                 AS HolaPepe,         	--       Hola Pepe    
+			TRIM('       Hola Pepe    ')           AS HolaPepeTrim,     	--Hola Pepe
+			TRIM(LEADING 'a' from 'antonia')       AS Example_Trim_1,   	--ntonia
+			TRIM(TRAILING 'a' from 'antonia')      AS Example_Trim_2,   	--antoni
+			TRIM(BOTH 'A' FROM 'ANTONIA')          AS Example_Trim3,    	--NTONI
 			--Ejemplos tabla AP_CHECKS_ALL:
-			VENDOR_NAME 		                AS Vendor_Name,         --Advanced Network Devices
-			TRIM(BOTH 'A' from VENDOR_NAME) 	AS Vendor_Name_Trim_A,  --dvanced Network Devices (solo borra la A inicial porque A final no tiene).
-			TRIM(VENDOR_NAME) 	                AS Vendor_Name_Trim     --Advanced Network Devices - Devuelve lo mismo ya que no hay espacios al inicio o fin (solo entre las palabras). 
+			VENDOR_NAME 		                	AS Vendor_Name,         --Advanced Network Devices
+			TRIM(BOTH 'A' from VENDOR_NAME) 		AS Vendor_Name_Trim_A,  --dvanced Network Devices (solo borra la A inicial porque A final no tiene).
+			TRIM(VENDOR_NAME) 	                	AS Vendor_Name_Trim     --Advanced Network Devices - Devuelve lo mismo ya que no hay espacios al inicio o fin (solo entre las palabras). 
 			from AP_CHECKS_ALL;
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -298,13 +298,13 @@
 	from   AP_CHECKS_ALL
 	;
 
-	--17.2-To_date, trunc, restar y sumar dias, to_char:
+	--17.2-To_date, trunc, restar y sumar dias/meses/años, to_char:
 	select  --TO_DATE devuelve una fecha (en formato date: DD/MM/AAAA), conviertiendo un string (1er parametro) en dicha fecha date, en el formato especificado en el 2do parametro.
 			-- Sintaxis: TO_DATE(string1, formato_mascara, nls_language).  -- nls_language es opcional, casi nunca lo usamos.
-			TO_DATE('2003/07/09', 'yyyy/mm/dd')                     AS DATE1, --Devuelve 09/07/2003
-			TO_DATE('2003/07/09 23:30:25', 'YYYY/MM/DD HH24:MI:SS') AS DATE2, --Devuelve 09/07/2003. --HH24 para que me tome las 23 hs.
-			TO_DATE('070903', 'MMDDYY')                             AS DATE3, --Devuelve 09/07/2003
-			TO_DATE('09-JUL-2003','DD-MON-YYYY')                    AS DATE4, --Devuelve 09/07/2003
+			TO_DATE('2003/07/09', 'yyyy/mm/dd')                     		AS DATE1, 		--Devuelve 09/07/2003
+			TO_DATE('2003/07/09 23:30:25', 'YYYY/MM/DD HH24:MI:SS') 		AS DATE2, 		--Devuelve 09/07/2003. --HH24 para que me tome las 23 hs.
+			TO_DATE('070903', 'MMDDYY')                             		AS DATE3, 		--Devuelve 09/07/2003
+			TO_DATE('09-JUL-2003','DD-MON-YYYY')                    		AS DATE4, 		--Devuelve 09/07/2003
 			
 			-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 			
@@ -334,7 +334,7 @@
 			TO_DATE('10-JUN-2015','DD-MM-YYYY') - 14			  			AS RestamosDias,	--Restamos 14 dias.			--Devuelve 27/05/2015
 			add_months('10/06/2015',-5)   									AS RestamosMeses,	--Restamos 5 meses.			--Devuelve 10/01/2015
 			add_months('10/06/2015',12)   									AS SumamosUnAño,	--Sumamos 1 año (12 meses). --Devuelve 10/06/2016
-			last_day('10/06/2015') 		  									AS UltimoDiaMes     --Claudio usa bastante last_day, cuando le piden el primer dia del mes siguiente y esta bueno porque a esa funcion le sumas 1 mes y listo. 
+			last_day('10/06/2015') 		  									AS UltimoDiaMes,    --Claudio usa bastante last_day, cuando le piden el primer dia del mes siguiente y esta bueno porque a esa funcion le sumas 1 mes y listo. 
 			
 			--Devuelve 30/06/2015
 		
@@ -347,9 +347,10 @@
 				--Nls_language: Opcional. Lenguaje usado para convertir el valor a string. 
 				
 			--Por ej. me sirve Para obtener una fecha determinada de otra (por ej. AP_INVOICES_ALL.INVOICE_DAT era del tipo 2019-04-25T00:00:00.000+00:00. Y yo solo quiero DD/MM/YYYY. Entonces...:
-			TO_CHAR(AP_INVOICES_ALL.INVOICE_DAT,'DD/MM/YYYY')				AS Fecha_De_Factura --Devuelve 25-04-2019 en caso que AP_INVOICES_ALL.INVOICE_DAT sea 2019-04-25T00:00:00.000+00:00.
+			TO_CHAR(AP_INVOICES_ALL.INVOICE_DAT,'DD/MM/YYYY')				AS Fecha_De_Factura, --Devuelve 25-04-2019 en caso que AP_INVOICES_ALL.INVOICE_DAT sea 2019-04-25T00:00:00.000+00:00.
+			
 			--Otros ejemplos para numeros (Se puede usar para poner menos decimales: 
-			TO_CHAR(-1210.73, '9999.9')										AS Numero			--Devuelve -1210.7
+			TO_CHAR(-1210.73, '9999.9')										AS Numero			 --Devuelve -1210.7
 	from 	dual;
 
 	--FALTA: Obtener fechas menores a tanto. Usando <: where fecha < fecha1;
@@ -357,20 +358,20 @@
 
 	--17.3-Extract para ver la diferencia de meses, dias, años entre 2 fechas:
 	select
-			sysdate                                     AS Fecha_Actual_Sistema,        --05/12/2019.   Para sacar la fecha de hoy.
-			CHECK_DATE                                  AS Check_Date,                  --07/01/1996
-			round(MONTHS_BETWEEN(sysdate, CHECK_DATE))  AS Dif_Fechas_En_Meses,         --287.          Para sacar la diferencia de meses entre 2 fechas. 
-			round(sysdate - CHECK_DATE)                 AS Dif_Fechas_En_Dias,          --8734          Para sacar la diferencia de dias entre 2 fechas.
-			EXTRACT(YEAR from sysdate)                  AS Año_Actual,                  --2019
+			sysdate                                     					AS Fecha_Actual_Sistema,        --05/12/2019. Para sacar la fecha de hoy.
+			CHECK_DATE                                  					AS Check_Date,                  --07/01/1996. Un campo de fecha. 
+			round(MONTHS_BETWEEN(sysdate, CHECK_DATE))  					AS Dif_Fechas_En_Meses,         --287. Para sacar la diferencia de meses entre 2 fechas. 
+			round(sysdate - CHECK_DATE)                 					AS Dif_Fechas_En_Dias,          --8734. Para sacar la diferencia de dias entre 2 fechas.
+			EXTRACT(YEAR from sysdate)                  					AS Año_Actual,                  --2019
 			
 			--Aca obtenemos la cantidad de años de diferencia entre 2 fechas (la fecha actual sysdate y CHECK_DATE) obteniendo los años y luego restandolos:
-			(EXTRACT(YEAR from sysdate) - EXTRACT(YEAR from CHECK_DATE)) AS Dif_Fechas_En_Años --23.    Para sacar la diferencia de años entre 2 fechas. 
+			(EXTRACT(YEAR from sysdate) - EXTRACT(YEAR from CHECK_DATE)) 	AS Dif_Fechas_En_Años 			--23. Para sacar la diferencia de años entre 2 fechas. 
 			--Hacemos como arriba ya que en Oracle no esta la funcion datediff.
 	from AP_CHECKS_ALL
 	;
 
 	--17.4-Usando AVG sacamos la Antiguedad de CHECK_DATE promedio: para esto usamos la diferencia de años como lo hicimos arriba y sacamos un promedio de los años: 
-	select 	trunc(  AVG(EXTRACT(YEAR from sysdate) - EXTRACT(YEAR from CHECK_DATE))  , 2) AS Prom_Dif_Fechas_En_Años --14,80
+	select 	trunc(  AVG(EXTRACT(YEAR from sysdate) - EXTRACT(YEAR from CHECK_DATE))  , 2) 	AS Prom_Dif_Fechas_En_Años --14,80
 	from AP_CHECKS_ALL 
 	;
 
