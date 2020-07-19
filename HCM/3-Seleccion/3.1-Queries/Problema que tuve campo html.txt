@@ -1,0 +1,27 @@
+-El problema que tenia es que en los datos me traia un campo con etiquetas html (por ej. strong, b, h1, acentos con bspn algo asi, etc.).
+La solución a esto era utilizar esta función en el WORD / RTF cambiando el "MI_CAMPO" a mi campo...
+<?html2fo:xdoxslt:replace(xdoxslt:replace(xdoxslt:replace(xdoxslt:replace(xdoxslt:replace(xdoxslt:replace(MI_CAMPO,';&#10','') ,'<pre','<span') ,'</pre','</span'),'&#10;', ''),'nowrap','wrap'),'font-family:Symbol;','font-family:;')?>
+En Excel NO se puede al parecer, ya que la función html2fo NO existe... ver esta solución de acá de ultima abajo donde dice plantillas excel: 
+-https://support.oracle.com/epmos/faces/DocumentDisplay?_afrLoop=300205267182249&id=1953480.1&displayIndex=2&_afrWindowMode=0&_adf.ctrl-state=pwtjexvij_121#FIX
+https://towardsdatascience.com/do-the-keywords-in-your-resume-aptly-represent-what-type-of-data-scientist-you-are-59134105ba0d
+
+-->NO... ahi me dice que para mi campo que me trae cosas en html le haga un TO_CLOB para transformarlo a CLOB... eso hice --> TO_CLOB(QSTN_RESP.ANSWER_TEXT) as RTA_TEXTO
+Y después en el DM voy a diagrama y tengo que cambiar esa columna RTA_TEXTO de tipo CLOB a tipo XML.  
+Eso hice y en Data cuando le doy a run me tira este error:
+	parsererror [style=display: block; white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black]
+	h3 (This page contains the following errors:)
+	div (error on line 16 at column 38: Entity 'uacute' not defined ) [style=font-family:monospace;font-size:12px]
+Asi que con esto de Excel NO.
+Y tampoco funcionó haciendolo con word como abajo porque no me reconocía la función html2fo.
+
+-Asi que vamos a hacerlo con word / rtf... lo que hice fue... obtuve el campo asi en mi DM/query:
+'<![CDATA' || '['|| QSTN_RESP.ANSWER_CLOB || ']' || ']>'   RTA_TEXTO         --> QSTN_RESP.ANSWER_CLOB es mi campo CLOB... sino podria hacer TO_CLOB(QSTN_RESP.ANSWER_TEXT) que es lo mismo.
+Y ahi obtengo el RTA_TEXTO....
+Despues de ahi RECORDAR que tengo que ir al DM, voy a "diagrama" y tengo que cambiar esa columna RTA_TEXTO de tipo CLOB a tipo XML. 
+Y ahi listo, ahora vamos a data, me trae los resultados (en RTA_TEXTO me sigue trayendo los campos en html con los <h1> y demás, pero esto lo sacamos en el rtf).
+Exportamos el XML de ejemplo de ahi.
+Vamos al rtf, lo cargamos ahí, ponemos ese campo en el rtf, click derecho, propiedades, avanzadas y ahí copiamos y pegamos este código:
+<?html2fo:xdoxslt:replace(xdoxslt:replace(xdoxslt:replace(xdoxslt:replace(xdoxslt:replace(xdoxslt:replace(RTA_TEXTO,';&#10','') ,'<pre','<span') ,'</pre','</span'),'&#10;', ''),'nowrap','wrap'),'font-family:Symbol;','font-family:;')?>
+Y listo, cuando le doy a preview aparece exactamente como lo cargaron (osea las palabras enves de aparecer con <strong> aparecen en negrita magicamente). 
+
+--> El DM que hice esto fue el de "Preg_Y_Rtas". Ver ahi la query. 

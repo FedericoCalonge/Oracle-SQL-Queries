@@ -1,0 +1,4 @@
+select *
+from HRC_TXN_CONSOLE_ENTRY
+where STATUS_CATEGORY = 'FAILED'
+order by LAST_UPDATE_DATE desc

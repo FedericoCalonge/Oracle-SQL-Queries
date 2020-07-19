@@ -1,0 +1,53 @@
+-- CALIFICACIÓN ANTIGUEDAD
+SELECT
+	-- BASE_0.PROFILE_ID
+	BASE_1.PROFILE_ID
+	,BASE_1.ITEM_TEXT240_1 EMPLEADOR
+	,BASE_1.ITEM_TEXT240_9 CARGO
+	,BASE_1.ITEM_CLOB_2 RESPONSABILIDADES
+	--,'<![CDATA' || '['|| TO_CLOB(BASE_1.ITEM_CLOB_2)|| ']' || ']>' RESPONSABILIDADES
+	
+	--Lo que hacemos en este CASE es medir la cantidad de meses entre la fecha de fin y la de inicio. Y luego lo dividimos en 12 para que me dé en años. 
+	--Por ej. si me da 4 meses ... 4/12 me dá menor a 1... entonces (THEN) le ponemos 1. En cambio si trabajó más de 1 año me lo redondea PARA ABAJO (por el FLOOR).
+	--Y si NO tiene fecha de finalización (osea que es un trabajo actual) envés de la fecha de FIN le ponemos la fecha SYSDATE (por esto el NVL en caso que no tenga ITEM_DATE_2).
+	-- ITEM_DATE_2 = fecha de fin. ITEM_DATE_1 = fecha de inicio.
+	
+	,TO_CHAR(BASE_1.ITEM_DATE_1, 'DD/MM/YYYY')  			Fecha_Inicio_Act
+	,TO_CHAR(NVL(BASE_1.ITEM_DATE_2,SYSDATE), 'DD/MM/YYYY')	Fecha_Fin_Act
+	
+	,CASE
+		WHEN FLOOR(MONTHS_BETWEEN( NVL(BASE_1.ITEM_DATE_2,SYSDATE), BASE_1.ITEM_DATE_1) / 12) <= 1 THEN 1 || ' Año'
+		ELSE FLOOR(MONTHS_BETWEEN( NVL(BASE_1.ITEM_DATE_2,SYSDATE), BASE_1.ITEM_DATE_1) / 12) || ' Años'
+	END EXPERIENCIA_PERFIL_String
+
+	,CASE
+		WHEN FLOOR(MONTHS_BETWEEN( NVL(BASE_1.ITEM_DATE_2,SYSDATE), BASE_1.ITEM_DATE_1) / 12) <= 1 THEN 1 
+		ELSE FLOOR(MONTHS_BETWEEN( NVL(BASE_1.ITEM_DATE_2,SYSDATE), BASE_1.ITEM_DATE_1) / 12) 
+	END EXPERIENCIA_PERFIL
+	
+	--SELECT FLOOR(2.4),		--2 años.
+	--SELECT FLOOR(2.9), 		--2 años.
+	--SELECT ROUND(2.4,0), 		--2.0 (ver que la cuenta que da 2.9 sea float para que me agarre bien el round).
+	--SELECT ROUND(2.9,0), 		--3.0
+	
+	,BASE_2_4.JOB_FAMILY_NAME		--Grado de experiencia. 
+	
+FROM 
+	IRC_SUBMISSIONS BASE_0
+	,HRT_PROFILE_ITEMS BASE_1
+	,IRC_REQUISITIONS_B BASE_0_1
+	,HRT_PROFILE_RELATIONS BASE_2
+	,HR_ALL_POSITIONS_F BASE_2_1
+	,PER_JOBS_F BASE_2_3
+	,PER_JOB_FAMILY_F_TL BASE_2_4
+
+WHERE
+	BASE_1.PROFILE_ID = BASE_0.PROFILE_ID
+	AND BASE_1.CONTENT_TYPE_ID = 129 --EXPERIENCIA LABORAL
+	AND BASE_0_1.REQUISITION_ID = BASE_0.REQUISITION_ID
+	AND BASE_2.OBJECT_ID = BASE_0_1.POSITION_ID
+	AND BASE_2_1.POSITION_ID = BASE_2.OBJECT_ID
+	AND BASE_2_3.JOB_ID = BASE_2_1.JOB_ID
+	AND BASE_2_4.JOB_FAMILY_ID = BASE_2_3.JOB_FAMILY_ID
+	AND BASE_2_4.LANGUAGE = USERENV('LANG')
+	AND SYSDATE Between BASE_2_4.EFFECTIVE_START_DATE and BASE_2_4.EFFECTIVE_END_DATE

@@ -1,0 +1,46 @@
+select 
+		--Entrantes:
+		CUESTIONARIO.FEEDBACK_ID,					--Union con feedbacks.FEEDBACK_ID.
+		CUESTIONARIO.REQUISITION_ID,				--Union con feedbacks.REQUISITION_ID.
+		QSTNR_PARTICIP.SUBJECT_ID,					--Union con feedbacks.SUBMISSION_ID, ATENCION, NO ES SUBJECT_ID!
+		
+		--Saliente:
+		QSTNR_PARTICIP.QSTNR_PARTICIPANT_ID,		--Union con Preg_Y_Rtas.QSTNR_RESPONSE_ID.
+----------------------------------------------------------------------------------------------------------------
+		
+		CUESTIONARIO.PARTICIPANT_ID,				--El PARTICIPANT_ID es el ENTREVISTADOR, el que realiza el cuestionario al candidato. 
+		CUESTIONARIO.QUESTIONNAIRE_ID,
+		CUESTIONARIO_TL.NAME 						as NOMBRE_QTNR,
+		CUESTIONARIO.LAST_UPDATE_DATE				AS Last_Upd_Date_CUEST,
+		TO_CHAR(CUESTIONARIO.COMPLETION_DATE-1, 'DD/MM/YYYY')  as Fecha_Cuestionario,     --Siempre es esa fecha -1 (ver porque). 
+
+		
+		CUESTIONARIO_TL.OBJECT_VERSION_NUMBER		as OBJECT_VERSION_NUMBER_3,
+		CUESTIONARIO_TL.LAST_UPDATE_DATE			AS Last_Upd_Date_QSTNR_ct,
+		CUESTIONARIO_TL.QSTNR_VERSION_NUM			AS Version_Num_QSTNR_ct,
+		
+		PER_NAMES.FULL_NAME 						AS REALIZADOR
+		
+from 	IRC_IM_FEEDBK_REQUESTS 	CUESTIONARIO, 		--Tabla principal de cuestioanarios. 
+		HRQ_QSTNR_PARTICIPANTS 	QSTNR_PARTICIP,
+		HRQ_QUESTIONNAIRES_TL 	CUESTIONARIO_TL,	--Solo para traer el nombre cuestionario. 
+		PER_PERSON_NAMES_F 		PER_NAMES
+		
+where 	CUESTIONARIO.QUESTIONNAIRE_ID 					=	QSTNR_PARTICIP.QUESTIONNAIRE_ID 
+		and	CUESTIONARIO.PARTICIPANT_ID 				= 	QSTNR_PARTICIP.PARTICIPANT_ID  
+		and CUESTIONARIO.QUESTIONNAIRE_ID				= 	CUESTIONARIO_TL.QUESTIONNAIRE_ID 
+		AND CUESTIONARIO_TL.LANGUAGE 					= 	'E'
+		AND PER_NAMES.PERSON_ID 						= 	CUESTIONARIO.PARTICIPANT_ID
+		AND PER_NAMES.NAME_TYPE 						= 	'GLOBAL'
+		AND Trunc(SYSDATE) Between PER_NAMES.EFFECTIVE_START_DATE AND PER_NAMES.EFFECTIVE_END_DATE
+		AND CUESTIONARIO_TL.SOURCE_LANG					=   'E'
+		
+		--PARA SABER: si quisiera traer la last_update más alta de cada cuestionario:
+		--Asi puedo filtrar el maximo de 2 cuestionarios con QUESTIONNAIRE_ID distintos (asi me saca un maximom de last_update_date para cada QUESTIONNAIRE_ID que tenga):
+		/*
+		AND CUESTIONARIO.LAST_UPDATE_DATE = (	select 	MAX(CUESTI.LAST_UPDATE_DATE) 
+												from 	IRC_IM_FEEDBK_REQUESTS  CUESTI
+												where 	CUESTI.REQUISITION_ID = CUESTIONARIO.REQUISITION_ID
+														AND CUESTI.QUESTIONNAIRE_ID = CUESTIONARIO.QUESTIONNAIRE_ID
+												)
+		*/
