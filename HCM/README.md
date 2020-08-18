@@ -34,3 +34,11 @@
 	* 10.1-Datos de la Consola de transacción.
 	* 10.2-Logueos de usuarios en el sistema. 
 	* 10.3-Datos de flujos de aprobación (por ej. cuando se le da de alta a algún empleado). 
+
+* 11-Reporte que muestra datos de Empleados y sus tareas correspondientes a sus distintias checklists asociadas que están en estado 'pendiente'. Además, se realizó una query de BURSTING (Ver carpeta 'CON_Bursting') para el envío de email diario mediante Jobs/Schedule. En esta especificamos los parámetros del Bursting y además obtenemos los emails de los usuarios con el rol de IT Security Manager (los cuales recibirán las salidas en Excel de estos Reportes).
+	* 11.1-Queries utilizadas para el reporte (CON y SIN Bursting).
+	* 11.2-Parametro utilizado para el Reporte (Checklists).
+
+* 12-Reporte que muestra datos de Empleados y los Cuestionarios que completaron (los cuales están asociados a Checklists) con sus preguntas y respuestas. 
+	* 12.1-Queries utilizadas para el reporte (Versión con y sin comentarios).
+	* 12.2-Parametros utilizados para el Reporte.

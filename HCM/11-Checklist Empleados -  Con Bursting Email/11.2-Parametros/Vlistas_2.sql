@@ -1,0 +1,5 @@
+select 		distinct 
+			CHECKLIST_NAME 
+from 		PER_ALLOCATED_CHECKLISTS_TL 
+where 		LANGUAGE = USERENV ('LANG') 
+order by 	CHECKLIST_NAME
